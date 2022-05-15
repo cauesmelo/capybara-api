@@ -1,4 +1,12 @@
+
+using capybara_api.Infra;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
+    options.UseMySql(builder.Configuration["Database:ConnectionString"],
+            ServerVersion.AutoDetect(builder.Configuration["Database:ConnectionString"])));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
