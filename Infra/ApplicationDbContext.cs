@@ -1,9 +1,11 @@
 ﻿using capybara_api.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace capybara_api.Infra
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<User> User { get; set; }
         public DbSet<Preference> Preference { get; set; }
@@ -17,8 +19,9 @@ namespace capybara_api.Infra
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
             // builder.Ignore<Notification>();
+
+            base.OnModelCreating(builder);
 
             builder.Entity<Reminder>()
                 .Property(p => p.Title).HasMaxLength(255);

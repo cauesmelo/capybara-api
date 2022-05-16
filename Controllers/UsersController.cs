@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using capybara_api.Infra;
 using capybara_api.Models;
+using capybara_api.Models.DTO;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace capybara_api.Controllers
 {
@@ -15,99 +18,39 @@ namespace capybara_api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UsersController(ApplicationDbContext context)
+        public UsersController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
-        {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
-            var user = await _context.User.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
-
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserDTO userRequest)
         {
-          if (_context.User == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.User'  is null.");
-          }
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
+            var user = new IdentityUser {
+                Email = userRequest.Email,
+                UserName = userRequest.Email
+            };
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
+            var result = await _userManager.CreateAsync(user, userRequest.Password);
 
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+            if (!result.Succeeded)
+                return BadRequest(result.Errors.First());
 
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
+            var userClaims = new List<Claim> {
+            new Claim("Name", userRequest.Name),
+            };
 
-            return NoContent();
-        }
+            var claimResult = await _userManager
+                .AddClaimsAsync(user, userClaims);
 
-        private bool UserExists(Guid id)
-        {
-            return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
+            if (!claimResult.Succeeded)
+                return BadRequest(result.Errors.First());
+            
+
+                return Ok();
         }
     }
 }
