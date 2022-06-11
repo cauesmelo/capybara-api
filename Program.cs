@@ -2,6 +2,7 @@ using capybara_api.Attributes;
 using capybara_api.Infra;
 using capybara_api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -22,7 +23,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
     options.Password.RequireDigit = false;
 }).AddEntityFrameworkStores<AppDbContext>();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => {
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+    .RequireAuthenticatedUser()
+    .Build();
+});
+
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -1,11 +1,9 @@
 ﻿using capybara_api.Models;
 using capybara_api.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace capybara_api.Controllers;
 
-[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class NoteController : ControllerBase {
