@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'capybaranotes'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AA34830B19C946B79B916B728D2C774E }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_173352E0043D4E72B67E3983C412844D }}
           package: .
