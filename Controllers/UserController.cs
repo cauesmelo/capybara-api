@@ -1,0 +1,21 @@
+﻿using capybara_api.Models.DTO;
+using capybara_api.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace capybara_api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class UserController : ControllerBase {
+    private readonly UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    [HttpPost]
+    public IActionResult CreateUser([FromBody] UserCreate user) {
+        return Ok(userService.Create(user));
+    }
+
+}

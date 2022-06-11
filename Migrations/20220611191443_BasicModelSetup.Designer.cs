@@ -10,9 +10,9 @@ using capybara_api.Infra;
 
 namespace capybara_api.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220515220141_AddIdentity")]
-    partial class AddIdentity
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20220611191443_BasicModelSetup")]
+    partial class BasicModelSetup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,220 +23,138 @@ namespace capybara_api.Migrations
 
             modelBuilder.Entity("capybara_api.Models.Note", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("EditedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("content")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Note");
-                });
-
-            modelBuilder.Entity("capybara_api.Models.Preference", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("EditedOn")
+                    b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("NotificationEmail")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.HasKey("id");
 
-                    b.Property<string>("Theme")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Preference");
+                    b.ToTable("note");
                 });
 
             modelBuilder.Entity("capybara_api.Models.Reminder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("reminderDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("EditedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.ToTable("Reminder");
+                    b.ToTable("reminder");
                 });
 
             modelBuilder.Entity("capybara_api.Models.TaskList", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("EditedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.ToTable("TaskList");
+                    b.ToTable("taskList");
                 });
 
             modelBuilder.Entity("capybara_api.Models.TaskUnity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int?>("TaskListid")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("EditedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsComplete")
+                    b.Property<bool>("isComplete")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<Guid?>("TaskListId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("TaskListId");
+                    b.HasIndex("TaskListid");
 
-                    b.ToTable("TaskUnity");
+                    b.ToTable("taskUnity");
                 });
 
             modelBuilder.Entity("capybara_api.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("EditedBy")
+                    b.Property<string>("email")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("EditedOn")
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("preferenceEmailNotification")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("preferenceTheme")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.HasKey("id");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<Guid>("UserPreferenceId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserPreferenceId");
-
-                    b.ToTable("User");
+                    b.ToTable("user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -435,18 +353,7 @@ namespace capybara_api.Migrations
                 {
                     b.HasOne("capybara_api.Models.TaskList", null)
                         .WithMany("tasks")
-                        .HasForeignKey("TaskListId");
-                });
-
-            modelBuilder.Entity("capybara_api.Models.User", b =>
-                {
-                    b.HasOne("capybara_api.Models.Preference", "UserPreference")
-                        .WithMany()
-                        .HasForeignKey("UserPreferenceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserPreference");
+                        .HasForeignKey("TaskListid");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
