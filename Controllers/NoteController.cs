@@ -1,4 +1,4 @@
-﻿using capybara_api.Models;
+﻿using capybara_api.Models.DTO;
 using capybara_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +19,14 @@ public class NoteController : ControllerBase {
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody] Note note) {
+    public IActionResult Post([FromBody] NoteCreate note) {
         return Ok(noteService.Create(note));
     }
 
     [HttpPut]
     [Route("{id}")]
-    public IActionResult Put([FromBody] Note note) {
-        return Ok(noteService.Update(note));
+    public IActionResult Put(int id, [FromBody] NoteUpdate note) {
+        return Ok(noteService.Update(id, note));
     }
 
     [HttpDelete]

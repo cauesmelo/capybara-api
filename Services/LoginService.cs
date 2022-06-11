@@ -28,15 +28,22 @@ public class LoginService : BaseService {
         if(!isValidPassword)
             throw new HttpResponseException(400, "INVALID_PASSWORD");
 
+        IList<Claim> claims = userManager.GetClaimsAsync(user).Result;
+
+        ClaimsIdentity subject = new(new Claim[] {
+            new Claim(ClaimTypes.Email, loginData.email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+        });
+        subject.AddClaims(claims);
+
         byte[] key = Encoding.ASCII.GetBytes(configuration["JwtBearerTokenSettings:SecretKey"]);
 
         SecurityTokenDescriptor tokenDescriptor = new() {
-            Subject = new ClaimsIdentity(new Claim[] {
-            new Claim(ClaimTypes.Email, loginData.email),
-        }),
+            Subject = subject,
             SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Audience = configuration["JwtBearerTokenSettings:Audience"],
-            Issuer = configuration["JwtBearerTokenSettings:Issuer"]
+            Issuer = configuration["JwtBearerTokenSettings:Issuer"],
+            Expires = DateTime.UtcNow.AddDays(31),
         };
 
         JwtSecurityTokenHandler tokenHandler = new();
