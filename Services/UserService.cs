@@ -23,9 +23,9 @@ public class UserService : BaseService {
         IdentityResult? result = userManager.CreateAsync(identityUser, user.password).Result;
 
         if(!result.Succeeded)
-            throw new HttpResponseException(404, result.Errors.First().Description);
+            throw new HttpResponseException(404, result.Errors.First().Code);
 
-        List<Claim>? userClaims = new() {
+        List<Claim> userClaims = new() {
             new Claim("name", user.name),
             new Claim("theme", "WHITE"),
             new Claim("emailNotification", user.email),
