@@ -15,12 +15,12 @@ public class UserService : BaseService {
     : base(httpContextAccessor, configuration, context, userManager) { }
 
     public bool Create(UserCreate user) {
-        IdentityUser? identityUser = new() {
+        IdentityUser identityUser = new() {
             UserName = user.email,
             Email = user.email,
         };
 
-        IdentityResult? result = userManager.CreateAsync(identityUser, user.password).Result;
+        IdentityResult result = userManager.CreateAsync(identityUser, user.password).Result;
 
         if(!result.Succeeded)
             throw new HttpResponseException(404, result.Errors.First().Code);
