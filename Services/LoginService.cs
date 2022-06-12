@@ -17,7 +17,7 @@ public class LoginService : BaseService {
     UserManager<IdentityUser> userManager)
     : base(httpContextAccessor, configuration, context, userManager) { }
 
-    public string Login(Login loginData) {
+    public LoginResponse Login(Login loginData) {
         IdentityUser user = userManager.FindByEmailAsync(loginData.email).Result;
 
         if(user == null)
@@ -49,6 +49,16 @@ public class LoginService : BaseService {
         JwtSecurityTokenHandler tokenHandler = new();
         SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
-        return tokenHandler.WriteToken(token);
+        string tokenSerialized = tokenHandler.WriteToken(token);
+
+        LoginResponse loginResponse = new() {
+            token = tokenSerialized,
+            email = loginData.email,
+            emailNotification = claims.FirstOrDefault(c => c.Type == "emailNotification").Value,
+            name = claims.FirstOrDefault(c => c.Type == "name").Value,
+            theme = claims.FirstOrDefault(c => c.Type == "theme").Value,
+        };
+
+        return loginResponse;
     }
 }
