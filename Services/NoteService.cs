@@ -45,7 +45,7 @@ public class NoteService : BaseService {
         if(note == null)
             throw new HttpResponseException(404, "NOT_FOUND");
 
-        if(note.userId == userId)
+        if(note.userId != userId)
             throw new HttpResponseException(401, "NOT_OWNED");
 
         note.content = noteUpdate.content;
@@ -63,7 +63,7 @@ public class NoteService : BaseService {
         if(note == null)
             throw new HttpResponseException(404, "NOT_FOUND");
 
-        if(note.userId == userId)
+        if(note.userId != userId)
             throw new HttpResponseException(401, "NOT_OWNED");
 
         context.note.Remove(note);
