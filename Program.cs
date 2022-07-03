@@ -11,6 +11,16 @@ using System.Text.Json.Serialization;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options => {
+    options.AddPolicy(name: "AllowCapy",
+                      policy => {
+                          policy.WithOrigins(
+                              "https://capybara-web.azurewebsites.net/")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                      });
+});
+
 builder.Services.AddDbContextPool<AppDbContext>(options =>
     options.UseMySql(builder.Configuration["Database:ConnectionString"],
             ServerVersion.AutoDetect(builder.Configuration["Database:ConnectionString"])));
@@ -51,6 +61,7 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<TaskListService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers(opt => {
@@ -66,9 +77,13 @@ WebApplication app = builder.Build();
 if(app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 }
 
-app.UseCors();
+if(app.Environment.IsProduction()) {
+    app.UseCors("AllowCapy");
+}
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
