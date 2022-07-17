@@ -2,6 +2,7 @@
 using capybara_api.Models.DTO;
 using capybara_api.Utils;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,8 +15,9 @@ public class LoginService : BaseService {
     IHttpContextAccessor httpContextAccessor,
     IConfiguration configuration,
     AppDbContext context,
-    UserManager<IdentityUser> userManager)
-    : base(httpContextAccessor, configuration, context, userManager) { }
+    UserManager<IdentityUser> userManager,
+    IDistributedCache cache)
+    : base(httpContextAccessor, configuration, context, userManager, cache) { }
 
     public LoginResponse Login(Login loginData) {
         IdentityUser user = userManager.FindByEmailAsync(loginData.email).Result;

@@ -25,6 +25,8 @@ builder.Services.AddDbContextPool<AppDbContext>(options =>
     options.UseMySql(builder.Configuration["Database:ConnectionString"],
             ServerVersion.AutoDetect(builder.Configuration["Database:ConnectionString"])));
 
+builder.Services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
     options.Password.RequiredLength = 6;
     options.Password.RequireLowercase = false;

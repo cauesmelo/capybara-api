@@ -2,6 +2,7 @@
 using capybara_api.Models.DTO;
 using capybara_api.Utils;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 using System.Security.Claims;
 
 namespace capybara_api.Services;
@@ -11,8 +12,9 @@ public class UserService : BaseService {
     IHttpContextAccessor httpContextAccessor,
     IConfiguration configuration,
     AppDbContext context,
-    UserManager<IdentityUser> userManager)
-    : base(httpContextAccessor, configuration, context, userManager) { }
+    UserManager<IdentityUser> userManager, 
+    IDistributedCache cache)
+    : base(httpContextAccessor, configuration, context, userManager, cache) { }
 
     public bool Create(UserCreate user) {
         IdentityUser identityUser = new() {

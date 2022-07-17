@@ -4,27 +4,45 @@ using capybara_api.Models.DTO;
 using capybara_api.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using System.Text;
 
 namespace capybara_api.Services;
 
 public class TaskListService : BaseService {
+    private readonly string cacheKey = "notes@";
+
     public TaskListService(
         IHttpContextAccessor httpContextAccessor,
         IConfiguration configuration,
         AppDbContext context,
-        UserManager<IdentityUser> userManager)
-        : base(httpContextAccessor, configuration, context, userManager) { }
+        UserManager<IdentityUser> userManager,
+        IDistributedCache cache)
+        : base(httpContextAccessor, configuration, context, userManager, cache) { }
 
     public List<TaskList> Get() {
         string userId = GetUserId();
+        List<TaskList> taskLists;
+        byte[] taskListCache = cache.Get(GetCacheKey());
 
-        List<TaskList> taskLists = context.taskList
-            .Where(n => n.userId == userId)
-            .Include(n => n.tasks)
-            .AsNoTracking()
-            .OrderByDescending(d => d.updatedAt)
-            .ToList();
+        if(taskListCache is null) {
+            taskLists = context.taskList
+                .Where(n => n.userId == userId)
+                .Include(n => n.tasks)
+                .AsNoTracking()
+                .OrderByDescending(d => d.updatedAt)
+                .ToList();
+
+            byte[] serializedTaskLists = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(taskLists));
+
+            cache.Set(GetCacheKey(), serializedTaskLists, new DistributedCacheEntryOptions());
+        }
+        else {
+            string serialized = Encoding.UTF8.GetString(taskListCache);
+            taskLists = JsonConvert.DeserializeObject<List<TaskList>>(serialized);
+        }
 
         return taskLists;
     }
@@ -43,6 +61,7 @@ public class TaskListService : BaseService {
 
         context.taskList.Add(taskList);
         context.SaveChanges();
+        cache.Remove(GetCacheKey());
         return taskList;
     }
 
@@ -61,6 +80,7 @@ public class TaskListService : BaseService {
 
         context.taskList.Update(taskList);
         context.SaveChanges();
+        cache.Remove(GetCacheKey());
         return taskList;
     }
 
@@ -77,6 +97,7 @@ public class TaskListService : BaseService {
 
         context.taskList.Remove(taskList);
         context.SaveChanges();
+        cache.Remove(GetCacheKey());
     }
 
     private string GetUserId() {
@@ -84,5 +105,9 @@ public class TaskListService : BaseService {
                         .User.Claims
                         .First(c => c.Type == ClaimTypes.NameIdentifier)
                         .Value;
+    }
+
+    private string GetCacheKey() {
+        return cacheKey + GetUserId();
     }
 }

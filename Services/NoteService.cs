@@ -4,26 +4,44 @@ using capybara_api.Models.DTO;
 using capybara_api.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using System.Text;
 
 namespace capybara_api.Services;
 
 public class NoteService : BaseService {
+    private readonly string cacheKey = "notes@";
+
     public NoteService(
         IHttpContextAccessor httpContextAccessor,
         IConfiguration configuration,
         AppDbContext context,
-        UserManager<IdentityUser> userManager)
-        : base(httpContextAccessor, configuration, context, userManager) { }
+        UserManager<IdentityUser> userManager,
+        IDistributedCache cache)
+        : base(httpContextAccessor, configuration, context, userManager, cache) { }
 
     public List<Note> Get() {
         string userId = GetUserId();
+        List<Note> notes; 
+        byte[] notesCache = cache.Get(GetCacheKey());
 
-        List<Note> notes = context.note
-            .Where(n => n.userId == userId)
-            .AsNoTracking()
-            .OrderByDescending(d => d.updatedAt)
-            .ToList();
+        if(notesCache is null) {
+            notes = context.note
+                            .Where(n => n.userId == userId)
+                            .AsNoTracking()
+                            .OrderByDescending(d => d.updatedAt)
+                            .ToList();
+
+            byte[] serializedNotes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(notes));
+
+            cache.Set(GetCacheKey(), serializedNotes, new DistributedCacheEntryOptions());
+        }
+        else {
+            string serialized = Encoding.UTF8.GetString(notesCache);
+            notes = JsonConvert.DeserializeObject<List<Note>>(serialized);
+        }
 
         return notes;
     }
@@ -34,6 +52,7 @@ public class NoteService : BaseService {
         Note note = new() { content = noteCreate.content, userId = userId };
         context.note.Add(note);
         context.SaveChanges();
+        cache.Remove(GetCacheKey());
         return note;
     }
 
@@ -52,6 +71,7 @@ public class NoteService : BaseService {
 
         context.note.Update(note);
         context.SaveChanges();
+        cache.Remove(GetCacheKey());
         return note;
     }
 
@@ -68,6 +88,7 @@ public class NoteService : BaseService {
 
         context.note.Remove(note);
         context.SaveChanges();
+        cache.Remove(GetCacheKey());
     }
 
     private string GetUserId() {
@@ -75,5 +96,9 @@ public class NoteService : BaseService {
                         .User.Claims
                         .First(c => c.Type == ClaimTypes.NameIdentifier)
                         .Value;
+    }
+
+    private string GetCacheKey() {
+        return cacheKey + GetUserId();
     }
 }
