@@ -21,6 +21,7 @@ public class TaskListService : BaseService {
 
         List<TaskList> taskLists = context.taskList
             .Where(n => n.userId == userId)
+            .Include(n => n.tasks)
             .AsNoTracking()
             .OrderByDescending(d => d.updatedAt)
             .ToList();
@@ -34,10 +35,10 @@ public class TaskListService : BaseService {
         TaskList taskList = new() {
             title = taskListCreate.title,
             userId = userId,
-            tasks = (List<TaskUnity>) taskListCreate.tasks.Select(t => {
-                TaskUnity task = new() { title = t.title, isComplete = false };
+            tasks = taskListCreate.tasks.Select(t => {
+                TaskUnity task = new() { title = t, isComplete = false };
                 return task;
-            }),
+            }).ToList(),
         };
 
         context.taskList.Add(taskList);

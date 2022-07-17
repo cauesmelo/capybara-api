@@ -9,8 +9,8 @@ namespace capybara_api.Controllers;
 public class NoteController : ControllerBase {
     private readonly NoteService noteService;
 
-    public NoteController(NoteService disciplineService) {
-        this.noteService = disciplineService;
+    public NoteController(NoteService noteService) {
+        this.noteService = noteService;
     }
 
     [HttpGet]
