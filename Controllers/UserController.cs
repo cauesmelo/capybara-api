@@ -19,4 +19,9 @@ public class UserController : ControllerBase {
     public IActionResult CreateUser([FromBody] UserCreate user) {
         return Ok(userService.Create(user));
     }
+
+    [HttpGet]
+    public IActionResult Ping() {
+        return Ok(new { response = "PONG!" });
+    }
 }

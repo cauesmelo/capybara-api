@@ -65,6 +65,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<TaskListService>();
 builder.Services.AddScoped<TaskUnityService>();
+builder.Services.AddScoped<ReminderService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers(opt => {

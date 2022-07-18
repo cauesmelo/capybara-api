@@ -1,7 +1,6 @@
 ﻿using capybara_api.Models.DTO;
 using capybara_api.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace capybara_api.Controllers;
