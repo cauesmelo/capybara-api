@@ -23,7 +23,8 @@ builder.Services.AddCors(options => {
 
 builder.Services.AddDbContextPool<AppDbContext>(options =>
     options.UseMySql(builder.Configuration["Database:ConnectionString"],
-            ServerVersion.AutoDetect(builder.Configuration["Database:ConnectionString"])));
+            ServerVersion.AutoDetect(builder.Configuration["Database:ConnectionString"]),
+            options => options.EnableRetryOnFailure()));
 
 builder.Services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
 

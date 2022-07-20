@@ -24,7 +24,7 @@ public class NoteService : BaseService {
 
     public List<Note> Get() {
         string userId = GetUserId();
-        List<Note> notes; 
+        List<Note> notes;
         byte[] notesCache = cache.Get(GetCacheKey());
 
         if(notesCache is null) {

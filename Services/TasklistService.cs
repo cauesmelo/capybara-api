@@ -12,7 +12,7 @@ using System.Text;
 namespace capybara_api.Services;
 
 public class TaskListService : BaseService {
-    private readonly string cacheKey = "notes@";
+    private readonly string cacheKey = "tasklist@";
 
     public TaskListService(
         IHttpContextAccessor httpContextAccessor,
