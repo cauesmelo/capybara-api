@@ -14,7 +14,9 @@
 ### 1.2. Arquivos envolvidos
 
 [Arquivo principal](https://github.com/cauesmelo/capybara-api/blob/master/Program.cs)
+
 [Controlador](https://github.com/cauesmelo/capybara-api/blob/master/Controllers/NoteController.cs)
+
 [Serviço](https://github.com/cauesmelo/capybara-api/blob/master/Services/NoteService.cs)
 
 ### 1.3. Código fonte de medição
@@ -126,7 +128,7 @@ Tudo isso rodando sob Windows 11 Enterprise com 16gb de RAM e Intel Core i7 de o
 ### 1.5. Latência, vazão e concorrência
 
 A latência média das requisições realizadas foi de 1,84s, com um valor máximo de 16,49s.
-A vazão média das requisições feitas foi de em média 149/116 requisições por segundo para cada usuário virtual.
+A vazão média das requisições feitas foi de em média 149,116 requisições por segundo. Ao calcular a vazão por minuto, temos uma média de aproximadamente 9 mil requisições por minuto.
 Foi configurado um pool de usuários virtuais variáveis, começando com 200 usuários virtuais por 10 segundos, escalando até 500 e após 20segundos, escalando para baixo até 100 usuários virtuais e mantendo por 10 segundos.
 
 ### 1.6. Dados brutos
@@ -204,9 +206,13 @@ Ao análisar os resultados, imaginamos que ao editar ou excluir um recurso no ba
 ### 2.2. Arquivos envolvidos
 
 [Arquivo principal](https://github.com/cauesmelo/capybara-api/blob/master/Program.cs)
+
 [Controlador Lista de tarefas](https://github.com/cauesmelo/capybara-api/blob/master/Controllers/TaskListController.cs)
+
 [Controlador Tarefa](https://github.com/cauesmelo/capybara-api/blob/master/Controllers/TaskUnityController.cs)
+
 [Serviço Lista de tarefas](https://github.com/cauesmelo/capybara-api/blob/master/Services/TaskListService.cs)
+
 [Serviço tarefa](https://github.com/cauesmelo/capybara-api/blob/master/Services/TaskUnityService.cs)
 
 ### 2.3. Código fonte de medição
@@ -322,7 +328,7 @@ Tudo isso rodando sob Windows 11 Enterprise com 16gb de RAM e Intel Core i7 de o
 ### 2.5. Latência, vazão e concorrência
 
 A latência média das requisições realizadas foi de 1,08s, com um valor máximo de 8,05s.
-A vazão média das requisições feitas foi de em média 231,474 requisições por segundo para cada usuário virtual.
+A vazão média das requisições feitas foi de em média 231,474 requisições por segundo. Ao calcularmos a vazão por minuto, temos uma média de aproximademente 19mil requisiçoes por minuto.
 Foi configurado um pool de usuários virtuais variáveis, começando com 200 usuários virtuais por 20 segundos, escalando até 500 e após 30 segundos, escalando para baixo até 100 usuários virtuais em 10 segundos.
 
 ### 2.6. Dados brutos
