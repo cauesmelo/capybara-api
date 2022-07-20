@@ -29,8 +29,6 @@ public class UserService : BaseService {
 
         List<Claim> userClaims = new() {
             new Claim("name", user.name),
-            new Claim("theme", "WHITE"),
-            new Claim("emailNotification", user.email),
         };
 
         userManager.AddClaimsAsync(identityUser, userClaims).Wait();

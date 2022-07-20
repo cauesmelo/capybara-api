@@ -11,6 +11,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser> {
     public DbSet<TaskList> taskList { get; set; }
     public DbSet<TaskUnity> taskUnity { get; set; }
     public DbSet<Note> note { get; set; }
+    public DbSet<Preference> preference { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
