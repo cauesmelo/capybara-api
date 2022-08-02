@@ -398,3 +398,8 @@ Ao analisarmos os resultados, podemos ver um ganho de peformance razoável na ca
 
 ### 2.8. Alterações feitas
 Ao invés de invalidarmos o cache ao realizarmos modificações, optamos por uma estratégia de atualizar o cache e o banco de dados simultaneamente nas operações do sistema, mantendo assim um cache sempre válido e disponível para ser resgatado. Para isso, modificamos o arquivo de serviço das listas de tarefas.
+
+## Gráficos e dados antigos
+[Os gráficos de comparação entre os dois SLAs podem ser vistos clicando aqui](https://github.com/cauesmelo/capybara-api/blob/master/graficos.pdf)
+
+[Os dados completos do SLA anterior pode ser visto clicando aqui](https://github.com/cauesmelo/capybara-api/edit/master/primeiro-sla.md)
