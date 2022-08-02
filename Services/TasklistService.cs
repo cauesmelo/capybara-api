@@ -61,7 +61,22 @@ public class TaskListService : BaseService {
 
         context.taskList.Add(taskList);
         context.SaveChanges();
-        cache.Remove(GetCacheKey());
+
+        List<TaskList> tasklists = new();
+        byte[] tasklistsCache = cache.Get(GetCacheKey());
+
+        if(tasklistsCache is null) {
+            tasklists.Add(taskList);
+        }
+        else {
+            string serialized = Encoding.UTF8.GetString(tasklistsCache);
+            tasklists = JsonConvert.DeserializeObject<List<TaskList>>(serialized);
+            tasklists.Add(taskList);
+        }
+
+        byte[] serializedNotes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(tasklists));
+        cache.Set(GetCacheKey(), serializedNotes, new DistributedCacheEntryOptions());
+
         return taskList;
     }
 
@@ -80,7 +95,20 @@ public class TaskListService : BaseService {
 
         context.taskList.Update(taskList);
         context.SaveChanges();
-        cache.Remove(GetCacheKey());
+
+        List<TaskList> tasklists = new();
+        byte[] tasklistsCache = cache.Get(GetCacheKey());
+
+        if(tasklistsCache is not null) {
+            string serialized = Encoding.UTF8.GetString(tasklistsCache);
+            tasklists = JsonConvert.DeserializeObject<List<TaskList>>(serialized);
+            tasklists = tasklists.Where(n => n.id != taskListUpdate.id).ToList();
+        }
+        tasklists.Add(taskList);
+
+        byte[] serializedTasklist = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(tasklists));
+        cache.Set(GetCacheKey(), serializedTasklist, new DistributedCacheEntryOptions());
+
         return taskList;
     }
 
@@ -97,14 +125,25 @@ public class TaskListService : BaseService {
 
         context.taskList.Remove(taskList);
         context.SaveChanges();
-        cache.Remove(GetCacheKey());
+
+        List<TaskList> tasklists = new();
+        byte[] tasklistsCache = cache.Get(GetCacheKey());
+
+        if(tasklistsCache is not null) {
+            string serialized = Encoding.UTF8.GetString(tasklistsCache);
+            tasklists = JsonConvert.DeserializeObject<List<TaskList>>(serialized);
+            tasklists = tasklists.Where(n => n.id != id).ToList();
+            byte[] serializedTasklist = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(tasklists));
+            cache.Set(GetCacheKey(), serializedTasklist, new DistributedCacheEntryOptions());
+        }
     }
 
     private string GetUserId() {
         return httpContextAccessor.HttpContext
-                        .User.Claims
-                        .First(c => c.Type == ClaimTypes.NameIdentifier)
-                        .Value;
+                .User.Claims
+                .First(c => c.Type == ClaimTypes.NameIdentifier)
+                .Value;
+        //return "83f6f51f-cd5c-4c6b-a5f4-6ff0fc794d49";
     }
 
     private string GetCacheKey() {
