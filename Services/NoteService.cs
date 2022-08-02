@@ -52,7 +52,22 @@ public class NoteService : BaseService {
         Note note = new() { content = noteCreate.content, userId = userId };
         context.note.Add(note);
         context.SaveChanges();
-        cache.Remove(GetCacheKey());
+
+        List<Note> notes = new();
+        byte[] notesCache = cache.Get(GetCacheKey());
+
+        if(notesCache is null) {
+            notes.Add(note);
+        }
+        else {
+            string serialized = Encoding.UTF8.GetString(notesCache);
+            notes = JsonConvert.DeserializeObject<List<Note>>(serialized);
+            notes.Add(note);
+        }
+
+        byte[] serializedNotes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(notes));
+        cache.Set(GetCacheKey(), serializedNotes, new DistributedCacheEntryOptions());
+
         return note;
     }
 
@@ -71,7 +86,19 @@ public class NoteService : BaseService {
 
         context.note.Update(note);
         context.SaveChanges();
-        cache.Remove(GetCacheKey());
+
+        List<Note> notes = new();
+        byte[] notesCache = cache.Get(GetCacheKey());
+
+        if(notesCache is not null) {
+            string serialized = Encoding.UTF8.GetString(notesCache);
+            notes = JsonConvert.DeserializeObject<List<Note>>(serialized);
+            notes = notes.Where(n => n.id != id).ToList();
+        }
+        notes.Add(note);
+        byte[] serializedNotes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(notes));
+        cache.Set(GetCacheKey(), serializedNotes, new DistributedCacheEntryOptions());
+
         return note;
     }
 
@@ -88,14 +115,25 @@ public class NoteService : BaseService {
 
         context.note.Remove(note);
         context.SaveChanges();
-        cache.Remove(GetCacheKey());
+
+        List<Note> notes = new();
+        byte[] notesCache = cache.Get(GetCacheKey());
+
+        if(notesCache is not null) {
+            string serialized = Encoding.UTF8.GetString(notesCache);
+            notes = JsonConvert.DeserializeObject<List<Note>>(serialized);
+            notes = notes.Where(n => n.id != id).ToList();
+        }
+        byte[] serializedNotes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(notes));
+        cache.Set(GetCacheKey(), serializedNotes, new DistributedCacheEntryOptions());
     }
 
     private string GetUserId() {
         return httpContextAccessor.HttpContext
-                        .User.Claims
-                        .First(c => c.Type == ClaimTypes.NameIdentifier)
-                        .Value;
+                .User.Claims
+                .First(c => c.Type == ClaimTypes.NameIdentifier)
+                .Value;
+        //return "83f6f51f-cd5c-4c6b-a5f4-6ff0fc794d49";
     }
 
     private string GetCacheKey() {

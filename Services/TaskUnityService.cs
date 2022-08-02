@@ -2,6 +2,7 @@
 using capybara_api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;
+using System.Security.Claims;
 
 namespace capybara_api.Services;
 
@@ -25,9 +26,10 @@ public class TaskUnityService : BaseService {
 
     private string GetUserId() {
         return httpContextAccessor.HttpContext
-                        .User.Claims
-                        .First(c => c.Type == ClaimTypes.NameIdentifier)
-                        .Value;
+                .User.Claims
+                .First(c => c.Type == ClaimTypes.NameIdentifier)
+                .Value;
+        //return "83f6f51f-cd5c-4c6b-a5f4-6ff0fc794d49";
     }
 
     private string GetCacheKey() {
