@@ -56,9 +56,7 @@ public class LoginService : BaseService {
         LoginResponse loginResponse = new() {
             token = tokenSerialized,
             email = loginData.email,
-            emailNotification = claims.FirstOrDefault(c => c.Type == "emailNotification").Value,
             name = claims.FirstOrDefault(c => c.Type == "name").Value,
-            theme = claims.FirstOrDefault(c => c.Type == "theme").Value,
         };
 
         return loginResponse;
